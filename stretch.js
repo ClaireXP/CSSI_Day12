@@ -10,7 +10,7 @@
  *    round, random
  */
 
-let backgroundColor, playerSnake, currentApple, score;
+let backgroundColor, playerSnake, currentApple, score
 
 function setup() {
   // Canvas & color settings
@@ -48,6 +48,7 @@ class Snake {
     this.y = height - 10;
     this.direction = 'N';
     this.speed = 12;
+    this.tail = [new TailSegment(this.x, this.y)];
   }
 
   moveSelf() {
@@ -62,6 +63,8 @@ class Snake {
     } else {
       console.log("Error: invalid direction");
     }
+    this.tail.unshift(new TailSegment(this.x, this.y));
+    this.tail.pop();
   }
 
   showSelf() {
@@ -69,6 +72,9 @@ class Snake {
     noFill();
     rect(this.x, this.y, this.size, this.size);
     noStroke();
+    for (let i = 0; i < this.tail.length; i++) {
+      this.tail[i].showSelf();
+    }
   }
 
   checkApples() {
@@ -78,14 +84,43 @@ class Snake {
       // Make a new apple, increment the score, and extend the tail.
       score += 1;
       currentApple = new Apple();
+      this.extendTail();
     }
   }
 
-  checkCollisions() {}
+  checkCollisions() {
+    if (this.tail.length > 2) {
+      for (let i=1; i < this.tail.length; i++) {
+        if (this.x == this.tail[i].x && this.y == this.tail[i].y) {
+          gameOver();
+        }
+        // This helper text will show the index of each tail segment.
+        // text(i, this.tail[i].x, this.tail[i].y)
+      }
+    }
+  }
 
-  extendTail() {}
+  extendTail() {
+    // Add a new segment by duplicating whatever you find at the end of the tail.
+    let lastTailSegment = this.tail[this.tail.length - 1];
+    // Push a new tail segment to the end, using the same position as the
+    // current last segment of the tail.
+    this.tail.push(new TailSegment(lastTailSegment.x, lastTailSegment.y));
+  }
 }
 
+class TailSegment {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.size = 10;
+  }
+
+  showSelf() {
+    fill(0);
+    rect(this.x, this.y, this.size, this.size);
+  }
+}
 
 class Apple {
   constructor() {
@@ -110,11 +145,22 @@ function keyPressed() {
     playerSnake.direction = "E";
   } else if (keyCode === LEFT_ARROW && playerSnake.direction != 'E') {
     playerSnake.direction = "W";
+  } else if (keyCode === 32) {
+    restartGame();
   } else {
     console.log("wrong key");
   }
 }
 
-function restartGame() {}
+function restartGame() {
+  score = 0;
+  playerSnake = new Snake();
+  currentApple = new Apple();
+  loop();
+}
 
-function gameOver() {}
+function gameOver() {
+  stroke(0);
+  text("GAME OVER", 50, 50);
+  noLoop();
+}
