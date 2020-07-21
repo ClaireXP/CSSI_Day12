@@ -33,6 +33,7 @@
  *    keyCode, UP_ARROW, LEFT_ARROW, RIGHT_ARROW, DOWN_ARROW
  *    random,
  *    collideRectCircle, collideRectRect
+ *    loop, noLoop
  */
 
 let backgroundColor, player, currentApple, score;
@@ -72,6 +73,7 @@ class Snake {
     this.y = height - 10;
     this.direction = "N";
     this.speed = 12;
+    this.tail = [new body(this.x, this.y)];
   }
 
   moveSelf() {
@@ -86,6 +88,9 @@ class Snake {
     } else {
       console.log("Error: invalid direction");
     }
+    
+    this.tail.unshift(new body(this.x, this.y));
+    this.tail.pop();
   }
 
   showSelf() {
@@ -93,6 +98,10 @@ class Snake {
     fill("green");
     rect(this.x, this.y, this.size, this.size);
     noStroke();
+    
+    for (const t of this.tail) {
+      t.showSelf();
+    }
   }
 
   checkApples() {
@@ -109,13 +118,14 @@ class Snake {
     if(eating){
       score++;
       currentApple.respawn();
+      this.tail.push(new body(this.x, this.y));
     }
   }
 
-  checkCollisions(body) {
+  checkCollisions() {
     let hit = collideRectRect(
       this.x, this.y, this.size, this.size,
-      body.x, body.y, body.size
+      this.tail.x, this.tail.y, this.tail.size
     );
   }
 
@@ -123,8 +133,17 @@ class Snake {
 }
 
 class body {
-  constructor(){
-    
+  constructor(x, y){
+    this.size = 9;
+    this.x = x;
+    this.y = y;
+  }
+  
+  showSelf() {
+    noStroke();
+    fill("black");
+    rect(this.x, this.y, this.size, this.size);
+    noStroke();
   }
 }
 
@@ -169,4 +188,6 @@ function restartGame() {
   score = 0;
 }
 
-function gameOver() {}
+function gameOver() {
+  noLoop();
+}
