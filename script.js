@@ -12,7 +12,13 @@
   ___) |   | |   |  _ <  | |___    | |   | |___  |  _  |
  |____/    |_|   |_| \_\ |_____|   |_|    \____| |_| |_|
 
-1) 
+1) Have the frame rate go up slowly, increasing the speed the more apples you collect.
+2) Make it possible to lose lives by hitting the walls.
+3) Have obstacles occasionally show up. If you hit one, you die.
+4) Add power-ups.
+5) Add color to the tail in some creative way.
+6) Put Apples on a timer, and have them expire after a certain amount of time.
+7) Color code the Apples, and make each color worth a different point value.
 
 */
 
