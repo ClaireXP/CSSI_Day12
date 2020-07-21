@@ -28,9 +28,10 @@
  *    colorMode, HSB
  *    frameRate,
  *    width, height,
- *    rect,
- *    stroke, noStroke, noFill
+ *    rect, ellipse,
+ *    stroke, noStroke, noFill, fill, text,
  *    keyCode, UP_ARROW, LEFT_ARROW, RIGHT_ARROW, DOWN_ARROW
+ *    random,
  */
 
 let backgroundColor, player, currentApple, score
@@ -57,7 +58,11 @@ function draw() {
   displayScore();
 }
 
-function displayScore() {}
+function displayScore() {
+  noStroke();
+  fill("black");
+  text(`Score: ${score}`, 5, 15);
+}
 
 class Snake {
   constructor() {
@@ -83,35 +88,49 @@ class Snake {
   }
 
   showSelf() {
-    stroke("green");
-    noFill();
+    stroke("black");
+    fill("green");
     rect(this.x, this.y, this.size, this.size);
     noStroke();
   }
 
-  checkApples() {}
+  checkApples(a) {
+    let eating = collideRectCircle(this.x, this.y, this.size, this.size, a.)
+  }
 
-  checkCollisions() {}
+  checkCollisions() {
+    
+  }
 
-  extendTail() {}
+  extendTail() {
+    
+  }
 }
 
 class Apple {
-  constructor() {}
+  constructor() {
+    this.size = 10;
+    this.x = random(width);
+    this.y = random(height);
+  }
 
-  showSelf() {}
+  showSelf() {
+    stroke("black");
+    fill("red");
+    ellipse(this.x, this.y, this.size);
+  }
 }
 
 function keyPressed() {
   console.log("key pressed: ", keyCode)
   if (keyCode === UP_ARROW && player.direction != 'S') {
-    player.direction = "N";
+    player.direction = 'N';
   } else if (keyCode === DOWN_ARROW && player.direction != 'N') {
-    player.direction = "S";
+    player.direction = 'S';
   } else if (keyCode === RIGHT_ARROW && player.direction != 'W') {
-    player.direction = "E";
+    player.direction = 'E';
   } else if (keyCode === LEFT_ARROW && player.direction != 'E') {
-    player.direction = "W";
+    player.direction = 'W';
   } else {
     console.log("wrong key");
   }
