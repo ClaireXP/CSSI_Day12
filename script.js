@@ -32,16 +32,17 @@
  *    stroke, noStroke, noFill, fill, text,
  *    keyCode, UP_ARROW, LEFT_ARROW, RIGHT_ARROW, DOWN_ARROW
  *    random,
+ *    collideRectCircle, collideRectRect
  */
 
-let backgroundColor, player, currentApple, score
+let backgroundColor, player, currentApple, score;
 
 function setup() {
   // Canvas & color settings
   createCanvas(400, 400);
   colorMode(HSB, 360, 100, 100);
   backgroundColor = 95;
-  
+
   restartGame();
 }
 
@@ -50,7 +51,7 @@ function draw() {
   // The snake performs the following four methods:
   player.moveSelf();
   player.showSelf();
-  player.checkCollisions();
+  // player.checkCollisions();
   player.checkApples();
   // The apple needs fewer methods to show up on screen.
   currentApple.showSelf();
@@ -67,9 +68,9 @@ function displayScore() {
 class Snake {
   constructor() {
     this.size = 10;
-    this.x = width/2;
+    this.x = width / 2;
     this.y = height - 10;
-    this.direction = 'N';
+    this.direction = "N";
     this.speed = 12;
   }
 
@@ -94,15 +95,35 @@ class Snake {
     noStroke();
   }
 
-  checkApples(a) {
-    let eating = collideRectCircle(this.x, this.y, this.size, this.size, a.)
-  }
-
-  checkCollisions() {
+  checkApples() {
+    let eating = collideRectCircle(
+      this.x,
+      this.y,
+      this.size,
+      this.size,
+      currentApple.x,
+      currentApple.y,
+      currentApple.size
+    );
     
+    if(eating){
+      score++;
+      currentApple.respawn();
+    }
   }
 
-  extendTail() {
+  checkCollisions(body) {
+    let hit = collideRectRect(
+      this.x, this.y, this.size, this.size,
+      body.x, body.y, body.size
+    );
+  }
+
+  extendTail() {}
+}
+
+class body {
+  constructor(){
     
   }
 }
@@ -110,8 +131,8 @@ class Snake {
 class Apple {
   constructor() {
     this.size = 10;
-    this.x = random(width);
-    this.y = random(height);
+    this.x = random(width-this.size);
+    this.y = random(height-this.size);
   }
 
   showSelf() {
@@ -119,18 +140,23 @@ class Apple {
     fill("red");
     ellipse(this.x, this.y, this.size);
   }
+  
+  respawn() {
+    this.x = random(width-this.size);
+    this.y = random(height-this.size);
+  }
 }
 
 function keyPressed() {
-  console.log("key pressed: ", keyCode)
-  if (keyCode === UP_ARROW && player.direction != 'S') {
-    player.direction = 'N';
-  } else if (keyCode === DOWN_ARROW && player.direction != 'N') {
-    player.direction = 'S';
-  } else if (keyCode === RIGHT_ARROW && player.direction != 'W') {
-    player.direction = 'E';
-  } else if (keyCode === LEFT_ARROW && player.direction != 'E') {
-    player.direction = 'W';
+  console.log("key pressed: ", keyCode);
+  if (keyCode === UP_ARROW && player.direction != "S") {
+    player.direction = "N";
+  } else if (keyCode === DOWN_ARROW && player.direction != "N") {
+    player.direction = "S";
+  } else if (keyCode === RIGHT_ARROW && player.direction != "W") {
+    player.direction = "E";
+  } else if (keyCode === LEFT_ARROW && player.direction != "E") {
+    player.direction = "W";
   } else {
     console.log("wrong key");
   }
