@@ -37,7 +37,7 @@
  *    millis
  */
 
-let backgroundColor, player, currentApple, score, highScore;
+let backgroundColor, player, currentApple, score, highScore, hazards, power;
 
 function setup() {
   // Canvas & color settings
@@ -46,9 +46,9 @@ function setup() {
   backgroundColor = 95;
 
   let highscore = getItem("highscore");
-  if(highscore != null) highScore = highscore;
+  if (highscore != null) highScore = highscore;
   else highScore = 0;
-  
+
   restartGame();
 }
 
@@ -61,17 +61,21 @@ function draw() {
   player.checkApples();
   // The apple needs fewer methods to show up on screen.
   currentApple.showSelf();
+  
+  for(const h of hazards) h.showSelf();
+  power.showSelf();
+  
   // We put the score in its own function for readability.
   displayScore();
-  frameRate(12+player.tail.length*.5);
+  frameRate(12 + player.tail.length * 0.5);
 }
 
 function displayScore() {
   noStroke();
   fill("black");
   text(`Score: ${score}`, 5, 15);
-  
-  if(score>highScore) highScore = score;
+
+  if (score > highScore) highScore = score;
   text(`High Score: ${highScore}`, 5, 30);
 }
 
@@ -123,7 +127,7 @@ class Snake {
     );
 
     if (eating) {
-      score+=currentApple.value;
+      score += currentApple.value;
       currentApple.respawn();
       this.tail.push(new body(this.x, this.y));
     }
@@ -131,13 +135,40 @@ class Snake {
 
   checkCollisions() {
     if (this.tail.length > 2) {
-      for (const t of this.tail) {
-        if (this.x == t.x && this.y == t.y) gameOver();
-      }
+      for (const t of this.tail) if (this.x == t.x && this.y == t.y) gameOver();
     }
 
     if (this.x < 0 || this.x > width - this.size) gameOver();
     if (this.y < 0 || this.y > width - this.size) gameOver();
+    
+    for (const h of hazards){
+      let hit = collideRectRect(
+        this.x,
+        this.y,
+        this.size,
+        this.size,
+        h.x,
+        h.y,
+        h.size,
+        h.size,
+      ); if (hit) gameOver();
+    } 
+    
+    let s = collideRectCircle(
+      this.x,
+      this.y,
+      this.size,
+      this.size,
+      currentApple.x,
+      currentApple.y,
+      currentApple.size
+    );
+
+    if (eating) {
+      score += currentApple.value;
+      currentApple.respawn();
+      this.tail.push(new body(this.x, this.y));
+    }
   }
 }
 
@@ -162,25 +193,71 @@ class Apple {
     this.size = 10;
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
-    this.ms = millis() + 10*1000;
+    this.ms = millis() + 10 * 1000;
     this.value = random([1, 1, 1, 1, 1, 3, 3, 3, 5]);
   }
-  
+
   showSelf() {
     stroke("black");
-    if(this.value == 5) fill("red");
-    else if(this.value == 3) fill("orange");
+    if (this.value == 5) fill("red");
+    else if (this.value == 3) fill("orange");
     else fill("yellow");
     ellipse(this.x, this.y, this.size);
-    
-    if(millis() >= this.ms) this.respawn();
+
+    if (millis() >= this.ms) this.respawn();
   }
 
   respawn() {
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
     this.value = random([1, 1, 1, 1, 1, 3, 3, 3, 5]);
-    this.ms = millis() + 10*1000;
+    this.ms = millis() + 10 * 1000;
+  }
+}
+
+class powerUp {
+  constructor() {
+    this.size = 10;
+    this.x = random(this.size, width - this.size);
+    this.y = random(this.size, height - this.size);
+    this.ms = millis() + 10 * 1000;
+  }
+
+  showSelf() {
+    noStroke();
+    fill("black");
+    rect(this.x, this.y, this.size, this.size);
+
+    if (millis() >= this.ms) this.respawn();
+  }
+
+  respawn() {
+    this.x = random(this.size, width - this.size);
+    this.y = random(this.size, height - this.size);
+    this.ms = millis() + 10 * 1000;
+  }
+}
+
+class hazard {
+  constructor() {
+    this.size = 10;
+    this.x = random(this.size, width - this.size);
+    this.y = random(this.size, height - this.size);
+    this.ms = millis() + 10 * 1000;
+  }
+
+  showSelf() {
+    stroke("black");
+    noFill();
+    rect(this.x, this.y, this.size, this.size);
+
+    if (millis() >= this.ms) this.respawn();
+  }
+
+  respawn() {
+    this.x = random(this.size, width - this.size);
+    this.y = random(this.size, height - this.size);
+    this.ms = millis() + 10 * 1000;
   }
 }
 
@@ -203,6 +280,12 @@ function restartGame() {
   frameRate(12);
   player = new Snake();
   currentApple = new Apple();
+
+  hazards = [];
+  for (let i = 0; i < 3; i++) hazards.push(new hazard());
+  
+  power = new powerUp();
+
   score = 0;
 }
 
