@@ -58,12 +58,14 @@ function draw() {
   currentApple.showSelf();
   // We put the score in its own function for readability.
   displayScore();
+  frameRate(12+player.tail.length*.5);
 }
 
 function displayScore() {
   noStroke();
   fill("black");
   text(`Score: ${score}`, 5, 15);
+  text(`High Score: ${highscore}`, 5, 30);
 }
 
 class Snake {
@@ -79,7 +81,7 @@ class Snake {
   moveSelf() {
     this.tail.unshift(new body(this.x, this.y));
     this.tail.pop();
-    
+
     if (this.direction === "N") {
       this.y -= this.speed;
     } else if (this.direction === "S") {
@@ -98,8 +100,8 @@ class Snake {
     fill("green");
     rect(this.x, this.y, this.size, this.size);
     noStroke();
-    
-    for(let i=0; i<this.tail; i++) this.tail[i].showSelf(i);
+
+    for (let i = 0; i < this.tail.length; i++) this.tail[i].showSelf(i);
   }
 
   checkApples() {
@@ -112,8 +114,8 @@ class Snake {
       currentApple.y,
       currentApple.size
     );
-    
-    if(eating){
+
+    if (eating) {
       score++;
       currentApple.respawn();
       this.tail.push(new body(this.x, this.y));
@@ -121,27 +123,27 @@ class Snake {
   }
 
   checkCollisions() {
-    if(this.tail.length > 2){
-      for(const t of this.tail){
+    if (this.tail.length > 2) {
+      for (const t of this.tail) {
         if (this.x == t.x && this.y == t.y) gameOver();
       }
     }
-    
-    if(this.x<0 || this.x>width-this.size) gameOver();
-    if(this.y<0 || this.y>width-this.size) gameOver();
+
+    if (this.x < 0 || this.x > width - this.size) gameOver();
+    if (this.y < 0 || this.y > width - this.size) gameOver();
   }
 }
 
 class body {
-  constructor(x, y){
+  constructor(x, y) {
     this.size = 9;
     this.x = x;
     this.y = y;
   }
-  
+
   showSelf(i) {
     noStroke();
-    if(i%2==0) fill("black");
+    if (i % 2 == 0) fill("black");
     else fill("green");
     rect(this.x, this.y, this.size, this.size);
     noStroke();
@@ -151,8 +153,8 @@ class body {
 class Apple {
   constructor() {
     this.size = 10;
-    this.x = random(this.size, width-this.size);
-    this.y = random(this.size, height-this.size);
+    this.x = random(this.size, width - this.size);
+    this.y = random(this.size, height - this.size);
   }
 
   showSelf() {
@@ -160,10 +162,10 @@ class Apple {
     fill("red");
     ellipse(this.x, this.y, this.size);
   }
-  
+
   respawn() {
-    this.x = random(this.size, width-this.size);
-    this.y = random(this.size, height-this.size);
+    this.x = random(this.size, width - this.size);
+    this.y = random(this.size, height - this.size);
   }
 }
 
