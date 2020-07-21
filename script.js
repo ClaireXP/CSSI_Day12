@@ -19,7 +19,6 @@
 5) Add color to the tail in some creative way.
 6) Put Apples on a timer, and have them expire after a certain amount of time.
 7) Color code the Apples, and make each color worth a different point value.
-
 */
 
 // Name any p5.js functions we use in the global so Glitch can recognize them.
@@ -34,9 +33,10 @@
  *    random,
  *    collideRectCircle, collideRectRect
  *    loop, noLoop
+ *    getItem, storeItem
  */
 
-let backgroundColor, player, currentApple, score;
+let backgroundColor, player, currentApple, score, highScore;
 
 function setup() {
   // Canvas & color settings
@@ -44,6 +44,10 @@ function setup() {
   colorMode(HSB, 360, 100, 100);
   backgroundColor = 95;
 
+  let highscore = getItem("highscore");
+  if(highscore != null) highScore = highscore;
+  else highScore = 0;
+  
   restartGame();
 }
 
@@ -65,7 +69,9 @@ function displayScore() {
   noStroke();
   fill("black");
   text(`Score: ${score}`, 5, 15);
-  text(`High Score: ${highscore}`, 5, 30);
+  
+  if(score>highScore) highScore = score;
+  text(`High Score: ${highScore}`, 5, 30);
 }
 
 class Snake {
@@ -155,12 +161,15 @@ class Apple {
     this.size = 10;
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
+    this.ms = 15;
   }
-
+  
   showSelf() {
     stroke("black");
     fill("red");
     ellipse(this.x, this.y, this.size);
+    
+    
   }
 
   respawn() {
@@ -193,4 +202,5 @@ function restartGame() {
 
 function gameOver() {
   noLoop();
+  storeItem("highscore", highScore);
 }
