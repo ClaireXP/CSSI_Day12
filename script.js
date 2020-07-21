@@ -51,8 +51,8 @@ function draw() {
   background(backgroundColor);
   // The snake performs the following four methods:
   player.moveSelf();
-  player.showSelf();
   player.checkCollisions();
+  player.showSelf();
   player.checkApples();
   // The apple needs fewer methods to show up on screen.
   currentApple.showSelf();
@@ -73,10 +73,13 @@ class Snake {
     this.y = height - 10;
     this.direction = "N";
     this.speed = 12;
-    this.tail = [new body(this.x, this.y)];
+    this.tail = [];
   }
 
   moveSelf() {
+    this.tail.unshift(new body(this.x, this.y));
+    this.tail.pop();
+    
     if (this.direction === "N") {
       this.y -= this.speed;
     } else if (this.direction === "S") {
@@ -88,9 +91,6 @@ class Snake {
     } else {
       console.log("Error: invalid direction");
     }
-    
-    this.tail.unshift(new body(this.x, this.y));
-    this.tail.pop();
   }
 
   showSelf() {
@@ -99,9 +99,7 @@ class Snake {
     rect(this.x, this.y, this.size, this.size);
     noStroke();
     
-    for (const t of this.tail) {
-      t.showSelf();
-    }
+    for(let i=0; i<this.tail; i++) this.tail[i].showSelf(i);
   }
 
   checkApples() {
@@ -123,7 +121,7 @@ class Snake {
   }
 
   checkCollisions() {
-    if(this.tail.length > 4){
+    if(this.tail.length > 2){
       for(const t of this.tail){
         if (this.x == t.x && this.y == t.y) gameOver();
       }
@@ -141,9 +139,10 @@ class body {
     this.y = y;
   }
   
-  showSelf() {
+  showSelf(i) {
     noStroke();
-    fill("black");
+    if(i%2==0) fill("black");
+    else fill("green");
     rect(this.x, this.y, this.size, this.size);
     noStroke();
   }
@@ -152,8 +151,8 @@ class body {
 class Apple {
   constructor() {
     this.size = 10;
-    this.x = random(width-this.size);
-    this.y = random(height-this.size);
+    this.x = random(this.size, width-this.size);
+    this.y = random(this.size, height-this.size);
   }
 
   showSelf() {
@@ -163,8 +162,8 @@ class Apple {
   }
   
   respawn() {
-    this.x = random(width-this.size);
-    this.y = random(height-this.size);
+    this.x = random(this.size, width-this.size);
+    this.y = random(this.size, height-this.size);
   }
 }
 
