@@ -52,7 +52,7 @@ function draw() {
   // The snake performs the following four methods:
   player.moveSelf();
   player.showSelf();
-  // player.checkCollisions();
+  player.checkCollisions();
   player.checkApples();
   // The apple needs fewer methods to show up on screen.
   currentApple.showSelf();
@@ -123,13 +123,15 @@ class Snake {
   }
 
   checkCollisions() {
-    let hit = collideRectRect(
-      this.x, this.y, this.size, this.size,
-      this.tail.x, this.tail.y, this.tail.size
-    );
+    if(this.tail.length > 4){
+      for(const t of this.tail){
+        if (this.x == t.x && this.y == t.y) gameOver();
+      }
+    }
+    
+    if(this.x<0 || this.x>width-this.size) gameOver();
+    if(this.y<0 || this.y>width-this.size) gameOver();
   }
-
-  extendTail() {}
 }
 
 class body {
