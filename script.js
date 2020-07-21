@@ -33,26 +33,24 @@
  *    keyCode, UP_ARROW, LEFT_ARROW, RIGHT_ARROW, DOWN_ARROW
  */
 
-let backgroundColor, playerSnake, currentApple, score
+let backgroundColor, player, currentApple, score
 
 function setup() {
   // Canvas & color settings
   createCanvas(400, 400);
   colorMode(HSB, 360, 100, 100);
   backgroundColor = 95;
-  frameRate(12);
-  playerSnake = new Snake();
-  currentApple = new Apple();
-  score = 0;
+  
+  restartGame();
 }
 
 function draw() {
   background(backgroundColor);
   // The snake performs the following four methods:
-  playerSnake.moveSelf();
-  playerSnake.showSelf();
-  playerSnake.checkCollisions();
-  playerSnake.checkApples();
+  player.moveSelf();
+  player.showSelf();
+  player.checkCollisions();
+  player.checkApples();
   // The apple needs fewer methods to show up on screen.
   currentApple.showSelf();
   // We put the score in its own function for readability.
@@ -85,7 +83,7 @@ class Snake {
   }
 
   showSelf() {
-    stroke(240, 100, 100);
+    stroke("green");
     noFill();
     rect(this.x, this.y, this.size, this.size);
     noStroke();
@@ -106,19 +104,24 @@ class Apple {
 
 function keyPressed() {
   console.log("key pressed: ", keyCode)
-  if (keyCode === UP_ARROW && playerSnake.direction != 'S') {
-    playerSnake.direction = "N";
-  } else if (keyCode === DOWN_ARROW && playerSnake.direction != 'N') {
-    playerSnake.direction = "S";
-  } else if (keyCode === RIGHT_ARROW && playerSnake.direction != 'W') {
-    playerSnake.direction = "E";
-  } else if (keyCode === LEFT_ARROW && playerSnake.direction != 'E') {
-    playerSnake.direction = "W";
+  if (keyCode === UP_ARROW && player.direction != 'S') {
+    player.direction = "N";
+  } else if (keyCode === DOWN_ARROW && player.direction != 'N') {
+    player.direction = "S";
+  } else if (keyCode === RIGHT_ARROW && player.direction != 'W') {
+    player.direction = "E";
+  } else if (keyCode === LEFT_ARROW && player.direction != 'E') {
+    player.direction = "W";
   } else {
     console.log("wrong key");
   }
 }
 
-function restartGame() {}
+function restartGame() {
+  frameRate(12);
+  player = new Snake();
+  currentApple = new Apple();
+  score = 0;
+}
 
 function gameOver() {}
