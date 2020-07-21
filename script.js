@@ -61,10 +61,10 @@ function draw() {
   player.checkApples();
   // The apple needs fewer methods to show up on screen.
   currentApple.showSelf();
-  
-  for(const h of hazards) h.showSelf();
+
+  for (const h of hazards) h.showSelf();
   power.showSelf();
-  
+
   // We put the score in its own function for readability.
   displayScore();
   frameRate(12 + player.tail.length * 0.5);
@@ -140,8 +140,8 @@ class Snake {
 
     if (this.x < 0 || this.x > width - this.size) gameOver();
     if (this.y < 0 || this.y > width - this.size) gameOver();
-    
-    for (const h of hazards){
+
+    for (const h of hazards) {
       let hit = collideRectRect(
         this.x,
         this.y,
@@ -150,24 +150,24 @@ class Snake {
         h.x,
         h.y,
         h.size,
-        h.size,
-      ); if (hit) gameOver();
-    } 
-    
-    let s = collideRectCircle(
+        h.size
+      );
+      if (hit) gameOver();
+    }
+
+    let superSnake = collideRectCircle(
       this.x,
       this.y,
       this.size,
       this.size,
-      currentApple.x,
-      currentApple.y,
-      currentApple.size
+      power.x,
+      power.y,
+      power.size
     );
 
-    if (eating) {
-      score += currentApple.value;
-      currentApple.respawn();
-      this.tail.push(new body(this.x, this.y));
+    if (superSnake) {
+      score += 25;
+      power.respawn();
     }
   }
 }
@@ -220,7 +220,7 @@ class powerUp {
     this.size = 10;
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
-    this.ms = millis() + 10 * 1000;
+    this.ms = millis() + 1.2 * 1000;
   }
 
   showSelf() {
@@ -234,7 +234,7 @@ class powerUp {
   respawn() {
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
-    this.ms = millis() + 10 * 1000;
+    this.ms = millis() + 1.2 * 1000;
   }
 }
 
@@ -283,7 +283,7 @@ function restartGame() {
 
   hazards = [];
   for (let i = 0; i < 3; i++) hazards.push(new hazard());
-  
+
   power = new powerUp();
 
   score = 0;
