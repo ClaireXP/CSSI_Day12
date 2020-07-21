@@ -34,6 +34,7 @@
  *    collideRectCircle, collideRectRect
  *    loop, noLoop
  *    getItem, storeItem
+ *    millis
  */
 
 let backgroundColor, player, currentApple, score, highScore;
@@ -122,7 +123,7 @@ class Snake {
     );
 
     if (eating) {
-      score++;
+      score+=currentApple.value;
       currentApple.respawn();
       this.tail.push(new body(this.x, this.y));
     }
@@ -161,20 +162,25 @@ class Apple {
     this.size = 10;
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
-    this.ms = 15;
+    this.ms = millis() + 10*1000;
+    this.value = random([1, 1, 1, 1, 1, 3, 3, 3, 5]);
   }
   
   showSelf() {
     stroke("black");
-    fill("red");
+    if(this.value == 5) fill("red");
+    else if(this.value == 3) fill("orange");
+    else fill("yellow");
     ellipse(this.x, this.y, this.size);
     
-    
+    if(millis() >= this.ms) this.respawn();
   }
 
   respawn() {
     this.x = random(this.size, width - this.size);
     this.y = random(this.size, height - this.size);
+    this.value = random([1, 1, 1, 1, 1, 3, 3, 3, 5]);
+    this.ms = millis() + 10*1000;
   }
 }
 
